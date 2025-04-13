@@ -1,0 +1,280 @@
+{% load custom_filters %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - WildcatWear</title>
+    
+    <!-- Linking external stylesheets for FontAwesome icons and custom styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/utility-styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/store.css' %}">
+</head>
+<body>
+
+    <!-- Navbar with hamburger menu for mobile -->
+    <!-- The hamburger menu and search feature uses a hidden checkbox for toggle functionality without 
+     requiring JavaScript. Also, this can make it more accessible and lightweight for the site -->
+    <nav class="navbar d-flex justify-between flex-wrap align-center">
+        <input type="checkbox" id="navbar-toggle" class="navbar-toggle">
+        <label for="navbar-toggle" class="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
+        </label>
+        
+        <a href="{% url 'home' %}" class="logo-container d-flex flex-1 justify-center">
+            <img src="{% static 'images/wildcat-logo.png' %}" alt="WildcatWear Logo" class="logo">
+        </a>
+        
+        <div class="nav-links d-flex flex-1 justify-start">
+            <a href="#" class="nav-link mr-2 p-2">Shop</a>
+            <a href="#" class="nav-link mr-2 p-2">Collections</a>
+            <a href="#" class="nav-link mr-2 p-2">About</a>
+            <a href="#" class="nav-link mr-2 p-2" id="admin-tools"><i class="fa-solid fa-tools"></i> Admin Tools</a>
+        </div>
+        
+        <div class="nav-actions d-flex flex-1 align-center justify-end gap-4">
+            <!-- For the search form, I separated it into desktop and mobile search components. 
+                "search-container" is for Desktop, and "mobile-search-container" is for Mobile.
+                Both are using form action with 'GET' that directs to the Search Result page. -->
+            
+            <!-- 1. Desktop Search -->
+            <!-- Always visible in larger screen, but hidden in smaller screen.-->
+            <form action="{% url 'search' %}" method="GET" class="search-container d-flex align-center desktop-search">
+                <input type="text" name="query" class="search-input px-2" placeholder="Search products...">
+                <button type="submit" class="desktop-search-submit my-1 mr-2">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+    
+            <!-- 2. Mobile Search -->
+            <!-- Search fields expands to take up the full width of the navbar. 
+                There is a submit button as well as a "x" button to close on the right. -->
+            <div class="mobile-search-container">
+                <input type="checkbox" id="search-toggle" class="search-toggle">
+                <label for="search-toggle" class="search-icon-btn">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </label>
+                
+                <form action="{% url 'search' %}" method="GET" class="mobile-search-expanded">
+                    <input type="text" name="query" class="mobile-search-input px-2" placeholder="Search products...">
+                    <button type="submit" class="mobile-search-submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <label for="search-toggle" class="mobile-search-close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </label>
+                </form>
+            </div>
+
+            <a href="#" class="login-link d-flex align-center gap-1">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                <span class="login-text">Login</span>
+            </a>
+            <a href="#" class="cart-link d-flex align-center gap-1">
+                <i class="fa-solid fa-shopping-cart"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb navigation for better user experience and SEO -->
+    <nav class="breadcrumb container pt-3 pb-0" aria-label="breadcrumb">
+        <ol class="d-flex flex-wrap gap-2 p-0 m-0">
+            <li class="d-flex align-center"><a href="{% url 'home' %}">Home</a></li>
+            <li class="d-flex align-center"><a href="#">{{ product.category }}</a></li>
+            <li class="d-flex align-center" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+    
+    <!-- Product Submission Modal + Form -->
+    <div id="product-submission-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Add New Product</h2>
+            <form id="product-submission-form">
+                <label>Product Name: <input type="text" name="name" required></label>
+                <label>Product Category: 
+                    <select name="category" required>
+                        <option value="Apparel">Apparel</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Gifts">Gifts</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </label>
+                <label>Product Price: <input type="number" name="price" step="0.01" required></label>
+                <label>Product Rating: <input type="number" name="rating" min="0" max="5" step="0.1" required></label>
+                <label>Product Description: <textarea name="description" required></textarea></label>
+                <label>Product Features (comma-separated): <input type="text" name="features" required></label>
+                <label>Image Short Name: <input type="text" name="imageName" required placeholder="e.g., newproduct.jpg"></label>
+                <div class="form-actions">
+                    <button type="submit">Submit</button>
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Details Section -->
+    <section class="product-details container">
+        <!-- Grid layout ensures responsive design and maintains spacing between image and product info -->
+        <div class="product-grid d-grid gap-5 mb-5">
+            
+            <!-- Product image -->
+            <div class="product-image d-flex flex-column gap-3">
+                {% for visual in visuals %}
+                    {{ visual|get_html|safe }}
+                {% endfor %}
+            </div>
+
+            <!-- Product information -->
+            <div class="product-info d-flex flex-column gap-3">
+                <h1>{{ product.name }}</h1>
+
+                <div class="price-favorite-section">
+                    <!-- Product price -->
+                    <p class="product-price">${{ product.price }}</p>
+                    <!-- Favorite button -->
+                    <button class="favorite-btn d-none">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+                </div>
+
+                <!-- Displaying star ratings dynamically -->
+                <div class="product-rating d-flex align-center">
+                    <!-- Display Solid star -->
+                    {% with ''|center:product.rating|slice:':5' as stars %}
+                        {% for _ in stars %}
+                            <i class="fa-solid fa-star"></i>
+                        {% endfor %}
+                    {% endwith %}
+                    
+                    <!-- Display half star if needed -->
+                    {% if product.rating|floatformat:1|slice:'-1:' >= '1' %}
+                        <i class="fa-solid fa-star-half-alt"></i>
+                    {% endif %}
+                    <span class="ml-2">{{ product.rating }}</span>
+                </div>
+
+                <!-- Product description with key features -->
+                <div class="product-description">
+                    <p>{{ product.description }}</p>
+                    <ul class="features-list my-3 mx-0 p-0">
+                        {% for feature in product_features %}
+                            <li class="d-flex align-center gap-2 mb-2">
+                                <i class="fa-solid fa-check"></i> {{ feature }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Size selection with buttons -->
+                <!-- This only show for products in category of "Apparel", other than that it will not be displayed.-->
+                {% if product.category|lower == 'apparel' %}
+                <div class="size-selector my-3 mx-0">
+                    <label for="size" class="mb-2">Select Size:</label>
+                    <div class="size-options d-flex gap-3">
+                        <button class="size-btn">S</button>
+                        <button class="size-btn">M</button>
+                        <button class="size-btn">L</button>
+                        <button class="size-btn">XL</button>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Add to cart button -->  
+                <a href="#" class="btn btn-primary add-to-cart d-flex align-center justify-center gap-2 mt-3">
+                    <i class="fa-solid fa-shopping-cart"></i>
+                    Add to Cart
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Container for Pokémon & Weather -->
+    <div class="pokemon-weather-grid container d-grid grid-cols-2 gap-4">
+        <div id="pokemon-container" class="pokemon-data p-3">
+            <p>Loading Pokémon data...</p>
+        </div>
+
+        <div id="weather-container" class="weather-data p-3">
+            <p>Loading weather data...</p>
+        </div>
+    </div>
+
+    <!-- Comment Section -->
+    <section class="comments-section container mt-3">
+        <h3 class="align-center">Leave a Review</h3>
+
+        <!-- Comment Form -->
+        <div class="comment-form">
+            <form id="comment-form">
+                <div class="form-group mb-3">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="rating">Rating</label>
+                    <select id="rating" class="form-control" required>
+                        <option value="">Select Rating</option>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="2">2 Stars</option>
+                        <option value="1">1 Star</option>
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="comment-text">Your Review</label>
+                    <textarea id="comment-text" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+            </form>
+        </div>
+
+        <!-- Comments List -->
+        <div id="comments-list" class="comments-list">
+            <!-- Comments will appear here -->
+        </div>
+    </section>
+
+    <!-- Suggested Products Section -->
+    <section class="suggested-products container">
+        <h2 class="section-title my-5 pb-2">You May Also Like</h2>
+        
+        <!-- Grid layout for suggested products -->
+        <div class="suggestions-grid d-grid grid-cols-4 gap-4 mt-5">
+            {% for suggested_product in suggested_products %}
+                <a href="{% url 'product_detail' %}?id={{ suggested_product.product_id }}" class="suggestion-card">
+                    <img src="{% static 'images/' %}{{ suggested_product.get_image_name }}" alt="{{ suggested_product.name }}">
+                    <h3 class="py-2 px-3 m-0">{{ suggested_product.name }}</h3>
+                    <p class="price pt-0 pb-3 pl-3 m-0">${{ suggested_product.price }}</p>
+                </a>            
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Footer -->
+     <!-- This section provides links to Terms, Privacy, Accessibility as well as copyright information. -->
+     <footer class="footer pt-4">
+        <div class="footer-bottom mt-5 py-3 d-flex justify-between align-center flex-wrap gap-3">
+            <div class="footer-links d-flex gap-4">
+                <a href="#">Terms of Use</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Accessibility</a>
+            </div>
+            <p class="copyright mb-0">© WildcatWear 2025. All rights reserved.</p>
+        </div>
+    </footer>  
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="{% static 'js/product-data.js' %}"></script>
+    <script src="{% static 'js/search.js' %}"></script>
+    <script src="{% static 'js/product-submission.js' %}"></script>
+    <script src="{% static 'js/comment-system.js' %}"></script>
+    <script src="{% static 'js/like-system.js' %}"></script>
+    <script src="{% static 'js/product-navigation.js' %}"></script>
+    <script src="{% static 'js/api-service.js' %}"></script>
+</body>
+</html>
