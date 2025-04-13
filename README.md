@@ -26,7 +26,11 @@ The following API endpoints are available:
 
 ## OpenWeather API Key Setup
 
-To use the weather functionality, you need to set up the OpenWeather API key environment variable:
+To use the weather functionality, you need to set up your OpenWeather API key environment variable:
+
+1. Go to https://openweathermap.org/ and make a new account if you have not.
+2. After logged in, click on your profile and go to "My API Keys"
+3. Copy your API Key
 
 ### For Linux/Mac
 ```bash
