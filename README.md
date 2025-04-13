@@ -31,19 +31,21 @@ To use the weather functionality, you need to set up your OpenWeather API key en
 1. Go to https://openweathermap.org/ and make a new account if you have not.
 2. After logged in, click on your profile and go to "My API Keys"
 3. Copy your API Key
+4. Open your terminal (project directory)
+5. Depending on your OS, follow the step below:
 
-### For Linux/Mac
-```bash
-export OPENWEATHER_API_KEY=your_api_key_here
-```
-### For Windows (Command Prompt)
-```bash
-set OPENWEATHER_API_KEY=your_api_key_here
-```
-### For Windows (Powershell)
-```bash
-$env:OPENWEATHER_API_KEY = "your_api_key_here"
-```
+    ### For Linux/Mac
+    ```bash
+    export OPENWEATHER_API_KEY=your_api_key_here
+    ```
+    ### For Windows (Command Prompt)
+    ```bash
+    set OPENWEATHER_API_KEY=your_api_key_here
+    ```
+    ### For Windows (Powershell)
+    ```bash
+    $env:OPENWEATHER_API_KEY = "your_api_key_here"
+    ```
 
 ## Error Handling
 
