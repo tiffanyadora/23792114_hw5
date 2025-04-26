@@ -78,8 +78,6 @@ p {
     background-color: var(--ua-red);
 }
 
-/* Add to style.css */
-
 /* Notification */
 .notification {
     position: fixed;
