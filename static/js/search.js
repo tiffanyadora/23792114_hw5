@@ -1,4 +1,4 @@
-// static/js/search.js
+// search.js
 document.addEventListener('DOMContentLoaded', () => {
     // Get all search forms (desktop & mobile)
     const searchForms = document.querySelectorAll('form[action$="search/"]');
