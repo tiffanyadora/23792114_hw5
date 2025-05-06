@@ -72,7 +72,6 @@ function initializeCommentSystem() {
     loadComments();
 }
 
-// Replace DOMContentLoaded event with this
 document.addEventListener('DOMContentLoaded', () => {
     initializeCommentSystem();
 });
